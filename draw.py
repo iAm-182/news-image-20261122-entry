@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
-"""news-image-20261122 v2 — full-edition front page for Sunday 22 Nov 2026.
+"""news-image-20261122 v3 — full-edition front page for Sunday 22 Nov 2026.
 
 A newspaper front page drawn from scratch with PIL primitives only: no
 photos, no downloaded images, no external assets. The page is data-driven:
-a small list of feature stories plus a grid of one-line briefs, rendered by
-generic helpers below. Every story on the page happened, or was first
-reported, on Sunday 22 November 2026 (any time zone), verified against live
-reporting on the morning of 22 Nov 2026 (07:30 UTC). Saturday's football
+feature stories plus a grid of one-line briefs, rendered by generic
+helpers below. Every story on the page happened, or was first reported,
+on Sunday 22 November 2026 (any time zone), verified against live
+reporting on the evening of 22 Nov 2026 (19:15 UTC). Saturday's football
 scores sit in a strip labelled SATURDAY, and the DATE CHECK box at the
 bottom names the lookalike stories deliberately left out.
+
+v3 vs the submitted v2 (commit d277497): the two lead stories are now
+results, not previews — COP31 collapsed with no deal after 44 hours of
+overtime, and Liverpool beat Manchester United 4-0 at Anfield. Hong
+Kong's count is finished (record 98.79% turnout), India declared on
+720/9, the Las Vegas GP and Hull's shock win over Brighton are in, and
+five briefs are corrected or new (Kryvyi Rih toll, Sparta II tow, named
+Hormuz tankers, MLS playoff correction, ATP final first set).
 
 Run:  python3 draw.py   ->   writes entry.png (1024x1024) next to this file.
 Deterministic: two runs write identical bytes (no randomness, no network,
@@ -127,6 +135,9 @@ def brief_lines(d, tag, text, colw, size=14):
     return prefix, lines
 
 
+BRIEF_LEAD = 16
+
+
 def draw_brief(d, x, y, tag, text, colw):
     """One brief: bold tag inline, then regular text, max two lines."""
     fb = fnt(SANS_B, 14)
@@ -135,12 +146,12 @@ def draw_brief(d, x, y, tag, text, colw):
     d.text((x, y), prefix, font=fb, fill=RED)
     pw = textw(d, prefix, fb)
     for i, line in enumerate(lines):
-        yy = y + i * 17
+        yy = y + i * BRIEF_LEAD
         if i == 0:
             d.text((x + pw, yy), line, font=fr, fill=INK)
         else:
             d.text((x, yy), line, font=fr, fill=INK)
-    return y + 17 * len(lines)
+    return y + BRIEF_LEAD * len(lines)
 
 
 def ballot_icon(d, x, y, s):
@@ -180,88 +191,97 @@ LEAD = [
     {
         "tag": "Antalya \u00b7 Climate",
         "tag_fill": TEAL,
-        "head": "COP31: FINAL TEXT PUT TO THE VOTE",
-        "body": "A 10-page package was tabled at 2am after two days of "
-                "overtime. It never names fossil fuels, aims for 35% "
-                "electricity by 2035 and a billion tonnes of carbon "
-                "capture, and admits 1.5\u00b0C will be overshot. Delegates "
-                "vote this morning; one objection can stop it.",
+        "head": "COP31 COLLAPSES \u2014 NO DEAL",
+        "body": "After 44 hours of overtime, the longest COP ever, the "
+                "Antalya Pact was rejected. The EU, UK, Panama and the "
+                "Marshall Islands refused a text that never names fossil "
+                "fuels. President Kurum: \u201cthese decisions have not "
+                "been adopted.\u201d Guterres: \u201cdeeply disappointed.\u201d",
         "icon": None,
     },
     {
-        "tag": "The Gulf \u00b7 Escalation",
+        "tag": "Anfield \u00b7 Football",
         "tag_fill": RED,
-        "head": "IRAN HITS US BASES IN BAHRAIN",
-        "body": "The IRGC claims missile and drone strikes on US Patriot "
-                "radars at Al-Riffa and Awali Sakhir. Bahrain says an "
-                "industrial site was hit and set alight, with no "
-                "casualties. A Houthi missile aimed at western Saudi "
-                "Arabia was intercepted; three tankers were hit near "
-                "Hormuz.",
-        "icon": None,
+        "head": "LIVERPOOL ROUT UNITED",
+        "score": "LIVERPOOL 4 \u2013 0 MAN UTD",
+        "scorers": "Szoboszlai 10' \u00b7 Wirtz 13' \u00b7 Ngumoha 66' \u00b7 "
+                   "Munoz 82'",
+        "note": "Yoro off 8'; Pochettino's debut ends in a rout.",
+        "icon": "ball",
     },
 ]
 
 SECOND = [
     {
+        "tag": "The Gulf \u00b7 Escalation",
+        "tag_fill": RED,
+        "head": "IRAN HITS US BASES IN BAHRAIN",
+        "body": "The IRGC claims missile and drone strikes on US Patriot "
+                "radars in Bahrain. Bahrain says an industrial site was "
+                "hit and set alight, with no casualties.",
+        "icon": None,
+    },
+    {
         "tag": "Hong Kong \u00b7 Asia",
         "tag_fill": NAVY,
         "head": "HONG KONG VOTES",
-        "body": "856 candidates chase 723 seats. Polls close 6pm, count "
-                "tonight; the next leader is picked in March 2027.",
+        "body": "856 candidates chase 723 Election Committee seats. A "
+                "record 98.79% of 5,640 voters cast ballots; the count "
+                "finished at 10.15pm.",
         "icon": "ballot",
-        "turnout": 93.55,
-    },
-    {
-        "tag": "Anfield \u00b7 Football",
-        "tag_fill": RED,
-        "head": "POCHETTINO'S FIRST TEST",
-        "score": "LIVERPOOL v MAN UTD",
-        "scorers": "KICK-OFF 4.30PM GMT \u00b7 TODAY",
-        "note": "Pochettino's first game in charge of United.",
-        "icon": "ball",
+        "turnout": 98.79,
     },
     {
         "tag": "Wellington \u00b7 Cricket",
         "tag_fill": GREEN,
         "head": "INDIA 720/9 \u2014 A RECORD",
-        "body": "Pant's 128 powers India to the highest Test total ever "
-                "in New Zealand. Hosts 119/2 at stumps, 233 behind.",
+        "body": "Pant's 128 and Rahul's 136 power India to 720/9 "
+                "declared \u2014 the highest Test total ever in New "
+                "Zealand, a 352-run lead. Hosts 119/2 at stumps, 233 "
+                "behind.",
         "icon": None,
     },
 ]
 
+# Full-width Formula 1 band between the second row and the briefs.
+F1 = {
+    "tag": "Las Vegas \u00b7 Formula 1",
+    "head": "VERSTAPPEN WINS VEGAS THRILLER",
+    "body": "35 lead changes, 352 overtakes: Verstappen beats Norris by "
+            "0.639s, Piastri third. His 75th win \u2014 a third on the Strip.",
+}
+
 BRIEFS = [
-    ("MEXICO", "Cartel boss \u2018El Chapo Isidro\u2019 seized in Sinaloa; 11 killed in the raid."),
-    ("UKRAINE", "Russian strike on Kryvyi Rih kills two, a boy of seven; about 58 hurt."),
+    ("MEXICO", "Cartel boss \u2018El Chapo Isidro\u2019 seized in Guasave; 11 killed in the raid."),
+    ("UKRAINE", "Russian strike on Kryvyi Rih kills two; 60 hurt, six of them children."),
     ("NATO", "Rutte: alliance will defend \u2018every inch\u2019 of Poland; council meets Monday."),
     ("KYIV", "Zelensky: no written security guarantees yet; they must last decades."),
     ("WASHINGTON", "US wants a Ukraine deal by early January, the FT reports."),
     ("US SENATE", "Senate rejects a bid to limit Trump\u2019s strikes on Iran."),
     ("MARKETS", "S&P 500 falls 3.7% into correction as AI shares sell off; Nikkei -5.1%."),
+    ("BITCOIN", "Bitcoin holds $60,000 after touching a $55,130 low."),
     ("TRADE", "EU and Indonesia sign a trade deal after ten years of talks."),
     ("GAZA", "Israeli strikes continue; an aid vehicle is hit."),
-    ("AMSTERDAM", "PMs Burnham and Jetten pledge continued support for Ukraine."),
     ("DENMARK", "Russian attach\u00e9 expelled over an alleged plot."),
-    ("BEIRUT", "President Aoun blames Israel and Iran for threats to sovereignty."),
     ("GENEVA", "UN talks on AI weapons end with a tentative deal, no binding rules."),
     ("CYBER", "FBI criminal database hacked, reports say, amid wider cyber fears."),
     ("INDONESIA", "Factory fire kills three; 36 people missing."),
-    ("SEOUL", "Education chief quits amid an AI cheating scandal."),
     ("PERU", "M5.1 aftershock hits Jun\u00edn overnight; Friday\u2019s quake killed one."),
-    ("FINLAND", "Russian cargo ship Sparta II still ablaze; crew evacuated."),
-    ("HORMUZ", "Two tankers hit by projectiles; a third strikes a mine."),
+    ("FINLAND", "Russian cargo ship Sparta II still ablaze off Loviisa; crew out, tow promised."),
+    ("HORMUZ", "Tankers named: Torkel burns at anchor, Arina hit in her engine room."),
     ("TEHRAN", "Iran shows a new twin-missile launcher; 14 tankers ready to sail."),
-    ("SPORT", "Alcaraz faces Zverev in today\u2019s ATP Finals decider."),
-    ("RUGBY", "France beat Argentina to reach the final; Australia edge Wales."),
+    ("SPORT", "Alcaraz takes the first set 6-2 over Zverev in tonight\u2019s ATP Finals decider."),
+    ("RUGBY", "France thrash Argentina 45-17 to reach the Nations final; England beat NZ 37-12."),
     ("NHL", "Senators top Kings; Flyers edge Canadiens 4-3; Leafs lose a ninth straight."),
     ("NCAA", "No. 6 Indiana fall to Washington in overtime; playoff hopes dented."),
-    ("MLS", "Columbus thrash Inter Miami in the MLS Cup."),
+    ("MLS", "Columbus win 3-0 at Miami in the MLS Cup playoffs; Messi in a throw-in row."),
     ("TECH", "Google unveils Agent Compute Engine; AWS adds GPU inference."),
     ("TOKYO", "Japan\u2019s GDP slips on weak consumer spending."),
     ("ESTONIA", "Plans to shut its Russian border for at least six months."),
-    ("MINNESOTA", "Somali American driver assaulted after Trump\u2019s \u2018fight back\u2019 call."),
-    ("JERUSALEM", "Israeli envoy: US troops stay until Iran is beaten; backlash follows."),
+    ("NIGERIA", "Bayelsa boat accident toll rises to 24; minister orders a probe."),
+    ("SUDAN", "Amnesty: RSF drone strikes that killed 37 civilians are possible war crimes."),
+    ("KENYA", "Floods kill at least six and displace hundreds; Tana River hardest hit."),
+    ("IRAQ", "Fire at a Basra power station kills at least four; 35 hurt."),
 ]
 
 SATURDAY = [
@@ -271,6 +291,11 @@ SATURDAY = [
     "Bournemouth 2\u20130 Forest",
     "Tottenham 2\u20130 Ipswich",
     "Coventry 3\u20132 Crystal Palace",
+    "Aston Villa 0\u20130 Sunderland",
+]
+
+SUNDAY = [
+    "Hull 2\u20130 Brighton (McBurnie 90+2', 90+5')",
 ]
 
 DATE_CHECK = (
@@ -279,9 +304,20 @@ DATE_CHECK = (
     "Left out on purpose \u2014 not today\u2019s news: Norway\u2019s oil ruling "
     "(13 Nov), Ghana\u2019s banknotes (12 Nov), Kenya\u2019s Ebola discharge "
     "(11 Nov), the Peru quake (20 Nov), the US midterms (3 Nov), Lagarde\u2019s "
-    "resignation (29 Oct). The Anfield game is tonight's fixture, "
-    "previewed not reported."
+    "resignation (29 Oct)."
 )
+
+
+def chequered_flag(d, x, y, w, h):
+    """Small chequered flag: 6 columns x 4 rows of alternating squares."""
+    cw, ch = w / 6.0, h / 4.0
+    d.rectangle([x, y, x + w, y + h], outline=INK, width=2)
+    for r in range(4):
+        for c in range(6):
+            if (r + c) % 2 == 0:
+                d.rectangle([x + c * cw, y + r * ch,
+                             x + (c + 1) * cw, y + (r + 1) * ch],
+                            fill=INK)
 
 
 def build():
@@ -289,41 +325,55 @@ def build():
     d = ImageDraw.Draw(img)
     M = 36
     R = W - M
+    GAP = 6
 
     # ---- Masthead -------------------------------------------------------
-    d.rectangle([0, 0, W, 120], fill=NAVY)
-    d.rectangle([0, 120, W, 125], fill=GOLD)
-    d.text((M, 12), "THE WORLD IN ONE DAY",
-           font=fnt(SERIF_BLACK, 44), fill=WHITE)
-    d.text((M, 72), "SUNDAY  \u00b7  22 NOVEMBER 2026",
-           font=fnt(SANS_B, 28), fill=GOLD)
-    right1 = "FULL EDITION  \u00b7  DRAWN 07:30 UTC"
-    d.text((R - textw(d, right1, fnt(SANS_B, 18)), 26), right1,
+    d.rectangle([0, 0, W, 110], fill=NAVY)
+    d.rectangle([0, 110, W, 114], fill=GOLD)
+    d.text((M, 10), "THE WORLD IN ONE DAY",
+           font=fnt(SERIF_BLACK, 40), fill=WHITE)
+    d.text((M, 64), "SUNDAY  \u00b7  22 NOVEMBER 2026",
+           font=fnt(SANS_B, 26), fill=GOLD)
+    right1 = "FULL EDITION  \u00b7  DRAWN 19:15 UTC"
+    d.text((R - textw(d, right1, fnt(SANS_B, 18)), 20), right1,
            font=fnt(SANS_B, 18), fill=WHITE)
-    right2 = "42 STORIES  \u00b7  6 REGIONS"
-    d.text((R - textw(d, right2, fnt(SANS, 16)), 54), right2,
+    right2 = "44 STORIES  \u00b7  8 REGIONS"
+    d.text((R - textw(d, right2, fnt(SANS, 16)), 48), right2,
            font=fnt(SANS, 16), fill=(200, 205, 215))
-    d.text((R - textw(d, "ONE DAY \u00b7 ONE PICTURE", fnt(SANS, 15)), 82),
+    d.text((R - textw(d, "ONE DAY \u00b7 ONE PICTURE", fnt(SANS, 15)), 74),
            "ONE DAY \u00b7 ONE PICTURE", font=fnt(SANS, 15),
            fill=(200, 205, 215))
 
-    # ---- Lead row: COP31 + Gulf ------------------------------------------
-    y = 136
+    # ---- Lead row: COP31 collapse + Liverpool 4-0 ------------------------
+    y = 124
     col_w = (W - 2 * M - 24) // 2
     lx, rx = M, M + col_w + 24
     tops = []
     for x, story in ((lx, LEAD[0]), (rx, LEAD[1])):
         yy = tagline(d, x, y, story["tag"], fill=story["tag_fill"])
-        yy = block(d, x, yy, story["head"], fnt(SERIF_B, 28), col_w,
+        if story.get("icon") == "ball":
+            ball_icon(d, x + col_w - 24, yy + 10, 19)
+            head_w = col_w - 52
+        else:
+            head_w = col_w
+        yy = block(d, x, yy, story["head"], fnt(SERIF_B, 28), head_w,
                    leading=33)
-        yy = block(d, x, yy + 4, story["body"], fnt(SERIF, 17), col_w,
-                   leading=20)
+        if "score" in story:
+            yy = block(d, x, yy + 2, story["score"], fnt(SANS_B, 21),
+                       col_w, leading=25)
+            yy = block(d, x, yy, story["scorers"], fnt(SANS, 17), col_w,
+                       leading=21)
+            yy = block(d, x, yy + 2, story["note"], fnt(SERIF_I, 17),
+                       col_w, leading=21)
+        else:
+            yy = block(d, x, yy + 4, story["body"], fnt(SERIF, 17), col_w,
+                       leading=20)
         tops.append(yy)
-    y = max(tops) + 10
+    y = max(tops) + GAP
     hline(d, M, R, y)
-    y += 10
+    y += GAP
 
-    # ---- Second row: Hong Kong + Liverpool + India -----------------------
+    # ---- Second row: Gulf + Hong Kong + India ----------------------------
     col3 = (W - 2 * M - 2 * 20) // 3
     xs = [M, M + col3 + 20, M + 2 * (col3 + 20)]
     row2_bottom = y
@@ -350,55 +400,71 @@ def build():
             yy = block(d, x, yy + 2, story["body"], fnt(SERIF, 17), col3,
                        leading=21)
         if "turnout" in story:
-            yy += 4
-            d.text((x, yy), "TURNOUT 93.55% BY 2PM",
+            yy += 3
+            d.text((x, yy), "TURNOUT 98.79% \u2014 RECORD",
                    font=fnt(SANS_B, 13), fill=INK)
-            yy += 18
-            d.rectangle([x, yy, x + col3, yy + 12], outline=INK,
+            yy += 16
+            d.rectangle([x, yy, x + col3, yy + 10], outline=INK,
                         width=2, fill=WHITE)
             fill_w = int((col3 - 4) * story["turnout"] / 100.0)
-            d.rectangle([x + 2, yy + 2, x + 2 + fill_w, yy + 10],
+            d.rectangle([x + 2, yy + 2, x + 2 + fill_w, yy + 8],
                         fill=TEAL)
-            yy += 14
+            yy += 12
         row2_bottom = max(row2_bottom, yy)
-    y = row2_bottom + 8
+    y = row2_bottom + GAP
     hline(d, M, R, y)
-    y += 10
+    y += GAP
+
+    # ---- Formula 1 band ----------------------------------------------------
+    chequered_flag(d, M, y + 3, 36, 24)
+    fx = M + 48
+    tag_w = textw(d, F1["tag"].upper() + "  \u2014  ", fnt(SANS_B, 16))
+    d.text((fx, y + 5), F1["tag"].upper() + "  \u2014  ",
+           font=fnt(SANS_B, 16), fill=RED)
+    d.text((fx + tag_w, y), F1["head"], font=fnt(SERIF_B, 26), fill=INK)
+    y = block(d, fx, y + 30, F1["body"], fnt(SERIF, 16), R - fx,
+              leading=18)
+    y += GAP
+    hline(d, M, R, y)
+    y += GAP
 
     # ---- The day in brief: 3-column grid ---------------------------------
     yy = tagline(d, M, y, "The day in brief", fill=NAVY, size=18)
-    y = yy + 2
+    y = yy + 1
     grid_top = y
     col_b = (W - 2 * M - 2 * 20) // 3
     bx = [M, M + col_b + 20, M + 2 * (col_b + 20)]
     rows = (len(BRIEFS) + 2) // 3
-    row_h = 35
+    row_h = 32
     for i, (tag, text) in enumerate(BRIEFS):
         gx = bx[i % 3]
         gy = grid_top + (i // 3) * row_h
         draw_brief(d, gx, gy, tag, text, col_b)
     y = grid_top + rows * row_h + 2
     hline(d, M, R, y)
-    y += 8
+    y += GAP
 
-    # ---- Saturday strip ----------------------------------------------------
-    sat = "SATURDAY \u2014 " + "  \u00b7  ".join(SATURDAY) + \
-        "  \u00b7  TODAY: Hull host Brighton, 2pm"
-    y = block(d, M, y, sat, fnt(SANS, 14), R - M, leading=17)
+    # ---- Scores strips -------------------------------------------------------
+    sat = "SATURDAY \u2014 " + "  \u00b7  ".join(SATURDAY)
+    y = block(d, M, y, sat, fnt(SANS, 14), R - M, leading=15)
+    sun = "SUNDAY \u2014 " + "  \u00b7  ".join(SUNDAY)
+    y = block(d, M, y + 2, sun, fnt(SANS, 14), R - M, leading=15)
     y += 4
 
     # ---- Date check box ----------------------------------------------------
     box_top = y
-    inner = block(d, M + 12, box_top + 8, DATE_CHECK, fnt(SANS, 14),
-                  R - M - 24, leading=16)
-    box_bottom = inner + 8
+    inner = block(d, M + 12, box_top + 5, DATE_CHECK, fnt(SANS, 13),
+                  R - M - 24, leading=15)
+    box_bottom = inner + 4
     d.rectangle([M, box_top, R, box_bottom], fill=CREAM, outline=LINE,
                 width=2)
-    block(d, M + 12, box_top + 8, DATE_CHECK, fnt(SANS, 14),
-          R - M - 24, leading=16)
+    block(d, M + 12, box_top + 5, DATE_CHECK, fnt(SANS, 13),
+          R - M - 24, leading=15)
     y = box_bottom
     assert y <= H, f"layout overflow: y={y} > {H}"
-    print(f"layout ok: bottom y={y}, stories={5 + len(BRIEFS) + len(SATURDAY) + 1}")
+    nstories = (len(LEAD) + len(SECOND) + 1 + len(BRIEFS)
+                + len(SATURDAY) + len(SUNDAY))
+    print(f"layout ok: bottom y={y}, stories={nstories}")
 
     out = os.path.join(HERE, "entry.png")
     img.save(out, "PNG", optimize=True)
