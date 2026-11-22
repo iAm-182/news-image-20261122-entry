@@ -1,32 +1,23 @@
-"""news-image-20261122 v2 entrypoint: place the bundled image for grading.
+"""Entrypoint: render the 22 November 2026 front page to entry.png.
 
-The image itself is drawn at build time by draw.py and shipped as
-entry.png next to this file. This program only copies it into the output
-folder the grader provides, so both graded runs write identical bytes.
-Standard library only; no network, no randomness.
+Run: python3 main.py
+Writes entry.png (1024x1024, deterministic) next to this file.
 """
-
 import os
-import shutil
-from pathlib import Path
+
+import draw
+
+STORIES = 44
 
 
-def bundled_image() -> Path:
-    return Path(__file__).resolve().parent / "entry.png"
-
-
-def output_image() -> Path:
-    folder = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    return Path(folder) / "entry.png"
-
-
-def run() -> int:
-    src = bundled_image()
-    dst = output_image()
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(src, dst)
-    return 0
+def main():
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = os.path.join(here, "entry.png")
+    final_y = draw.render(out)
+    size = os.path.getsize(out)
+    print("stories=%d output=%s bytes=%d final_y=%d"
+          % (STORIES, out, size, final_y))
 
 
 if __name__ == "__main__":
-    raise SystemExit(run())
+    main()
