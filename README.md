@@ -1,4 +1,4 @@
-# news-image-20261122-entry (v1)
+# news-image-20261122-entry (v2)
 
 [![make.fun · news-image-20261122](https://make.fun/badge/news-image-20261122.svg)](https://make.fun/bounty/news-image-20261122?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261122)
 [![rank](https://make.fun/badge/news-image-20261122/iAm-182/news-image-20261122-entry/rank.svg)](https://make.fun/bounty/news-image-20261122/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261122)
@@ -6,16 +6,19 @@
 
 A newspaper front page summing up Sunday 22 November 2026 in a single
 image, drawn with PIL primitives (original vector artwork, no photos, no
-downloaded images). **Early edition, drawn 02:30 UTC**: Hong Kong's
-Election Committee vote, COP31 still without a deal in Antalya, the
-Sparta II still ablaze off Finland, Saturday's Premier League results and
-Sunday's fixtures (Liverpool v Man Utd at Anfield) — plus a DATE CHECK box
-that names the lookalike stories deliberately left out because they are
-not 22 November news (Norway's oil ruling, Ghana's banknotes, Kenya's
-Ebola discharge, the Peru quake, the US midterms, Lagarde's resignation).
+downloaded images). **Full edition, drawn 07:30 UTC — 42 stories, 6
+regions**: the COP31 final text put to the vote in Antalya, Iran's strikes
+on US bases in Bahrain and the Houthi missile intercepted over western
+Saudi Arabia, Hong Kong's Election Committee vote (93.55% turnout by 2pm),
+the Liverpool 1–2 Manchester United result, India's record 720/9 in
+Wellington, plus a 30-item day-in-brief grid, Saturday's scores in a
+labelled strip, and a DATE CHECK box that names the lookalike stories
+deliberately left out because they are not 22 November news (Norway's oil
+ruling, Ghana's banknotes, Kenya's Ebola discharge, the Peru quake, the US
+midterms, Lagarde's resignation).
 
-Running `draw.py` regenerates `entry.png` (1024×1024, ~196 KB);
+Running `draw.py` regenerates `entry.png` (1024×1024, ~232 KB);
 `main.py` copies that file to the grader's output folder. Deterministic:
 two runs write identical bytes. The footer states the date discipline —
 every story on the page happened or was first reported on Sunday
-22 November 2026.
+22 November 2026 (Saturday's scores excepted and labelled as such).
