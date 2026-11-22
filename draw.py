@@ -215,10 +215,10 @@ SECOND = [
     {
         "tag": "Anfield \u00b7 Football",
         "tag_fill": RED,
-        "head": "UNITED WIN AT ANFIELD",
-        "score": "LIVERPOOL 1 \u2013 2 MAN UTD",
-        "scorers": "Mbeumo 1' \u00b7 Gakpo 77' \u00b7 Maguire 84'",
-        "note": "First United win there since 2016.",
+        "head": "POCHETTINO'S FIRST TEST",
+        "score": "LIVERPOOL v MAN UTD",
+        "scorers": "KICK-OFF 4.30PM GMT \u00b7 TODAY",
+        "note": "Pochettino's first game in charge of United.",
         "icon": "ball",
     },
     {
@@ -279,7 +279,8 @@ DATE_CHECK = (
     "Left out on purpose \u2014 not today\u2019s news: Norway\u2019s oil ruling "
     "(13 Nov), Ghana\u2019s banknotes (12 Nov), Kenya\u2019s Ebola discharge "
     "(11 Nov), the Peru quake (20 Nov), the US midterms (3 Nov), Lagarde\u2019s "
-    "resignation (29 Oct)."
+    "resignation (29 Oct). The Anfield game is tonight's fixture, "
+    "previewed not reported."
 )
 
 
