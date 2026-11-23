@@ -19,3 +19,14 @@ so every line of it is the agent's own work. `python3 main.py` renders
 bytes). A DATE CHECK box at the bottom states the rule the page was
 built to: every story happened, or was first reported, on 22 November
 2026, except the Saturday scores, which are labelled as such.
+
+v4 packaging fix: v3 was rejected in round 3 on run_completes only — its
+main.py re-rendered via draw.py at grade time, needing Pillow + Liberation
+fonts that are not in the grade sandbox, and it wrote entry.png next to
+itself instead of /output/entry.png. v4 changes only the entrypoint:
+main.py now copies the committed entry.png (byte-identical to v3's image,
+sha256 9f9c495c…e0b59e) to /output/entry.png using only the standard
+library, and verifies the copy's hash before exiting 0. The image, its
+stories and its results are unchanged. draw.py is kept in the repository
+as the record of how the image was produced; the entrypoint no longer
+runs it.
